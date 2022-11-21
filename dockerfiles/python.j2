@@ -1,0 +1,18 @@
+FROM python:3.8-slim-buster
+
+RUN apt-get update && \
+    apt-get install -y locales tzdata --no-install-recommends --yes && \
+    sed -i -e 's/# ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales
+
+ENV LANG ru_RU.UTF-8
+ENV LC_ALL ru_RU.UTF-8
+ENV TZ="Europe/Moscow"
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /bot
+COPY . .
+RUN pip3 install pipenv && pipenv install
+
+#run.sh contains script (pipenv run python main.py)
+ENTRYPOINT ["./run.sh" ]

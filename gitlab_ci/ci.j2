@@ -1,0 +1,12 @@
+include:
+  - project: {{gitlab_project}}
+    file: {{template_filename}}
+    ref: {{lang}}
+
+variables:
+  ANSIBLE: "/home/support/{{project_name}}"
+  BRANCH: "{{branch}}"
+  TAG_BUILD_STAGE: "{{project_name}}Build"
+  TAG_BUILD_PROD: "{{project_name}}Build(Prod)"
+  TAG_DEPLOY_STAGE: "{{project_name}}Stage"
+  TAG_DEPLOY_PROD: "{{project_name}}Prod"

@@ -1,0 +1,52 @@
+version: '3.7'
+services:
+
+  {{service_name}}:
+    image: {{image_name}}
+    container_name: {{service_name}}
+    build: .
+    restart: always
+    ports:
+      - "{{port_host}}:{{port_container}}"
+    depends_on:
+      - {{pg_service_name}}
+    networks:
+      - {{network_name}}
+    environment:
+      spring.jpa.hibernate.ddl-auto: ${DDL_AUTO}
+      spring.datasource.username: ${DB_USER}
+      spring.datasource.password: ${DB_PASSWORD}
+      SQL_HOST: ${POSTGRES_HOST}
+
+    entrypoint: [ "java", "-jar", "app.jar" ]
+
+  {{pg_service_name}}:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "{{db_port_host}}:{{db_port_container}}"
+    env_file:
+      - .env
+    environment:
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${PODVIG_DB}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_HOST: {{pg_service_name}}
+      POSTGRES_PORT: {{db_port_container}}
+      POSTGRES_POOL: 10
+
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+    networks:
+      - {{network_name}}
+
+networks:
+  {{network_name}}:
+    name: {{network_name}}
+    driver: bridge
+
+volumes:
+  pg_data:
+

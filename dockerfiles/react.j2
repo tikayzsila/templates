@@ -1,0 +1,21 @@
+# ---- Base Nginx Image ----
+FROM alpine:latest AS base
+
+RUN apk add --no-cache --update nodejs npm
+WORKDIR /usr/local/app
+COPY . .
+
+# ---- Install & Cache js Dependencies ----
+FROM base AS dependencies
+# install node packages
+WORKDIR /usr/local/app
+RUN mkdir build
+RUN npm install --production
+
+FROM dependencies as builder
+RUN npm run build
+
+# ---- Release Image with Builded app ----
+FROM nginxinc/nginx-unprivileged:alpine
+WORKDIR /home/app
+COPY --chown=nginx:nginx --from=builder /usr/local/app/build /home/app

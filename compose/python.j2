@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+
+  {{service_name}}:
+    image: {{ image_name }}
+    container_name: {{ container_name }}
+    build: ./
+    restart: always
+
+    volumes:
+      - type: bind
+        source: ./file_on_host
+        target: /workdir/file_on_container
+
+    env_file:
+      - .env
+    ports:
+      - "{{port_host}}:{{port_container}}"
+    networks:
+      - {{network_name}}
+
+networks:
+  {{network_name}}:
+    name: {{network_name}}
+    driver: bridge
